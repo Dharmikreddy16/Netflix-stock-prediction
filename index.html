@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% if ticker %}{{ ticker }} Stock Price Prediction{% else %}Stock Price Prediction{% endif %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .center-title {
+            text-align: center;
+            margin-top: 15%;
+            font-size: 2.5em;
+        }
+        #clear-btn {
+            display: none;
+            margin: 10px auto;
+            padding: 8px 20px;
+            background-color: #e50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        #clear-btn:hover {
+            background-color: #b20710;
+        }
+    </style>
+</head>
+<body>
+    <input type="hidden" id="ticker-value" value="{{ ticker }}">
+
+    {% if not ticker %}
+        <h1 class="center-title">Stock Price Prediction</h1>
+    {% endif %}
+
+    <form method="POST">
+        <input type="text" name="ticker" placeholder="E.g. NFLX, AAPL, TATAMOTORS, CEAT, SBI">
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if ticker %}
+        <h1>{{ ticker }} Stock Price Prediction</h1>
+    {% endif %}
+
+    <div id="graph">{{ graph|safe }}</div>
+
+    <button id="clear-btn" onclick="clearDrawings()">Clear All Drawings</button>
+
+    {% if metrics %}
+    <p>{{ metrics }}</p>
+    {% endif %}
+    {% if table %}
+    <h3>Predicted Prices</h3>
+    <div>{{ table|safe }}</div>
+    {% endif %}
+
+    <script>
+        var ticker = document.getElementById('ticker-value').value;
+        if (ticker && ticker !== 'None') {
+            document.getElementById('clear-btn').style.display = 'block';
+        }
+
+        function clearDrawings() {
+            var graphDiv = document.getElementsByClassName('plotly-graph-div')[0];
+            if (graphDiv) {
+                graphDiv.layout.shapes = [];
+                graphDiv.layout.annotations = [];
+                graphDiv.layout.selections = [];
+                Plotly.react(graphDiv, graphDiv.data, graphDiv.layout);
+                Plotly.restyle(graphDiv, { selectedpoints: null });
+            }
+        }
+    </script>
+</body>
+</html>
