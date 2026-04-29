@@ -1,11 +1,13 @@
+import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import yfinance as yf
 import numpy as np
 import pandas as pd
-import os
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-
+from keras.models import Sequential
+from keras.layers import LSTM, Dense
 INDIAN_TICKERS = [
     "TATAMOTORS", "CEATLTD", "RELIANCE", "TCS", "INFY",
     "HDFCBANK", "ICICIBANK", "WIPRO", "SBIN", "ADANIENT",
@@ -70,7 +72,7 @@ def get_lstm_predictions(ticker="NFLX", days_to_predict=30):
         # Try downloading with extended date range
         data = yf.download(yf_ticker, start="2010-01-01", end="2025-12-31", progress=False)
 
-        # If empty try without .NS (maybe user typed full yfinance ticker)
+        # If empty try without .NS
         if data.empty and is_indian:
             data = yf.download(ticker, start="2010-01-01", end="2025-12-31", progress=False)
 
@@ -120,5 +122,5 @@ def get_lstm_predictions(ticker="NFLX", days_to_predict=30):
     return df, df_pred
 
 if __name__ == "__main__":
-    df_hist, df_pred = get_lstm_predictions(ticker="TATAMOTORS", days_to_predict=5)
+    df_hist, df_pred = get_lstm_predictions(ticker="NFLX", days_to_predict=5)
     print(df_pred)
